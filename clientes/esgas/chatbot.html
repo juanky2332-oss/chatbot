@@ -80,11 +80,10 @@ body.embedded .head-close{display:flex}
 .send:active:not(:disabled){transform:scale(.95)}
 .send:disabled{background:#27324a;color:#5c6c87;cursor:default;box-shadow:none}
 .send svg{width:16px;height:16px}
-.pwr{background:var(--panel);border-top:1px solid var(--line);padding:7px 12px;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
-.pwr span{font-size:10.5px;color:#5c6c87;letter-spacing:.1px}
-.pwr a{display:inline-flex;align-items:center;text-decoration:none;line-height:0;background:rgba(255,255,255,.92);padding:3px 7px;border-radius:6px}
-.pwr img{height:13px;object-fit:contain;display:block}
-.pwr .fb{font-size:11px;font-weight:800;color:#1a56db;letter-spacing:-.3px;display:none}
+.pwr{background:var(--panel);border-top:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0}
+.pwr span{font-size:10.5px;color:#6b7c96;letter-spacing:.2px}
+.pwr a{font-size:11.5px;font-weight:800;letter-spacing:.2px;text-decoration:none;background:linear-gradient(90deg,#60a5fa,#22d3ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;transition:opacity .15s}
+.pwr a:hover{opacity:.78}
 .err{padding:10px 14px;background:rgba(239,68,68,.12);color:#fca5a5;border-radius:10px;font-size:12.5px;border-left:3px solid #ef4444;margin:0 4px;animation:in .2s ease-out}
 @media (max-width:480px){body{padding:0}.chat{max-width:100%;height:100vh;height:100dvh;border-radius:0;border:none}}
 </style>
@@ -126,10 +125,7 @@ body.embedded .head-close{display:flex}
   <!-- ██ POWERED BY FLOWNEXION — OBLIGATORIO ██ -->
   <div class="pwr">
     <span>Powered by</span>
-    <a href="https://flownexion.com/" target="_blank" rel="noopener noreferrer" aria-label="Flownexion - Agencia IA">
-      <img src="https://flownexion.com/wp-content/uploads/2025/07/logotipo_flownexion_calidadBaja-1.png" alt="Flownexion" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
-      <span class="fb">flownexion</span>
-    </a>
+    <a href="https://flownexion.com/" target="_blank" rel="noopener noreferrer" aria-label="Flownexion - Agencia IA">Flownexion</a>
   </div>
 
 </div>

@@ -2,46 +2,40 @@
  * ESGAS — Proxy backend para el asistente técnico.
  * Generado por Flownexion (https://flownexion.com/).
  *
- * Función serverless lista para Vercel / Next.js (carpeta `api/`).
- * Adaptable a Netlify Functions, Cloudflare Workers o Express (ver al final).
+ * Función serverless para Vercel (carpeta `api/`). Usa la API de OpenAI.
+ * En este repo el proxy activo en producción es `/api/chat.js` (raíz);
+ * esta copia es la de referencia documentada para el cliente.
  *
  * Qué hace:
  *  1. Recibe los mensajes del chatbot del navegador.
- *  2. Añade la API key de Anthropic desde variable de entorno (NUNCA en el frontend).
- *  3. Reenvía a la API de Anthropic y devuelve la respuesta (con streaming SSE).
- *  4. Punto de extensión PRESTASHOP: enriquece el contexto con datos de catálogo
- *     en tiempo real (stock, precio, referencia) CUANDO se disponga de la API.
+ *  2. Añade la API key de OpenAI desde variable de entorno (NUNCA en el frontend).
+ *  3. Reenvía a la API de OpenAI y devuelve la respuesta (con streaming SSE).
+ *  4. Traduce la respuesta al formato que ya entiende el chatbot, así el
+ *     frontend (chatbot.html / ChatBot.jsx) no necesita cambios.
+ *  5. Punto de extensión PRESTASHOP: enriquece el contexto con datos de
+ *     catálogo en tiempo real CUANDO se disponga de la API.
  *
- * Variables de entorno necesarias:
- *  - ANTHROPIC_API_KEY      (obligatoria)
- *  - ALLOWED_ORIGIN         (recomendada, ej: https://esgas.es)
- *  - PRESTASHOP_API_URL     (futuro — webservice de PrestaShop, ej: https://esgas.es/api)
- *  - PRESTASHOP_API_KEY     (futuro — clave del webservice de PrestaShop)
+ * Variables de entorno:
+ *  - OPENAI_API_KEY        (obligatoria — clave de OpenAI, empieza por sk-...)
+ *  - OPENAI_MODEL          (opcional — por defecto: gpt-4o)
+ *  - ALLOWED_ORIGIN        (recomendada, ej: https://esgas.es)
+ *  - PRESTASHOP_API_URL    (futuro — webservice de PrestaShop)
+ *  - PRESTASHOP_API_KEY    (futuro — clave del webservice de PrestaShop)
  */
 
-const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-const ANTHROPIC_VERSION = "2023-06-01";
+const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+const DEFAULT_MODEL = "gpt-4o";
 const MAX_MESSAGES = 24;          // límite anti-abuso
 const MAX_CHARS_PER_MSG = 4000;   // límite anti-abuso
 
 // ─────────────────────────────────────────────────────────────
 // PUNTO DE EXTENSIÓN PRESTASHOP (pendiente de API)
 // ─────────────────────────────────────────────────────────────
-// Cuando ESGAS facilite la API de PrestaShop, implementar aquí la
-// búsqueda de producto/stock/precio. El resultado se inyecta como
-// contexto adicional en el `system` para que el asistente responda
-// con datos reales de catálogo en lugar de derivar a la web.
-//
-// PrestaShop Webservice (ejemplo de referencia, NO activo):
-//   GET {PRESTASHOP_API_URL}/products?filter[reference]=[ref]&output_format=JSON
-//   Header:  Authorization: Basic base64(PRESTASHOP_API_KEY + ":")
-//
 async function lookupCatalog(userText) {
   const base = process.env.PRESTASHOP_API_URL;
   const key = process.env.PRESTASHOP_API_KEY;
   if (!base || !key) return null; // API aún no configurada → sin enriquecimiento
 
-  // Heurística simple: extraer una posible referencia de rodamiento del texto.
   const ref = (userText.match(/\b[0-9A-Z]{3,}(?:[-/][0-9A-Z]+)*\b/i) || [])[0];
   if (!ref) return null;
 
@@ -61,7 +55,7 @@ async function lookupCatalog(userText) {
       typeof p.quantity !== "undefined" ? `Stock: ${p.quantity} ud.` : "",
     ].filter(Boolean).join("\n");
   } catch {
-    return null; // ante cualquier fallo, el asistente sigue funcionando sin catálogo
+    return null;
   }
 }
 // ─────────────────────────────────────────────────────────────
@@ -74,17 +68,25 @@ function setCors(res) {
   res.setHeader("Vary", "Origin");
 }
 
+// Evento SSE en el formato que ya parsea el chatbot (estilo Anthropic).
+function sseDelta(text) {
+  return `data: ${JSON.stringify({
+    type: "content_block_delta",
+    delta: { type: "text_delta", text },
+  })}\n\n`;
+}
+
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return res.status(500).json({ error: "ANTHROPIC_API_KEY no configurada" });
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) return res.status(500).json({ error: "OPENAI_API_KEY no configurada" });
 
   let body = req.body;
   if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }
-  const { model, system, messages, max_tokens = 1024, stream = false } = body || {};
+  const { system, messages, max_tokens = 1024, stream = false } = body || {};
 
   // Guardarraíles básicos
   if (!Array.isArray(messages) || messages.length === 0)
@@ -106,18 +108,24 @@ export default async function handler(req, res) {
     }
   } catch { /* sin enriquecimiento */ }
 
-  const upstream = await fetch(ANTHROPIC_URL, {
+  // Formato OpenAI: el system va como primer mensaje con role "system".
+  const oaMessages = [];
+  if (sys) oaMessages.push({ role: "system", content: sys });
+  for (const m of messages) {
+    if (m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+      oaMessages.push({ role: m.role, content: m.content });
+  }
+
+  const upstream = await fetch(OPENAI_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": ANTHROPIC_VERSION,
+      Authorization: `Bearer ${key}`,
     },
     body: JSON.stringify({
-      model: model || "claude-sonnet-4-6",
+      model: process.env.OPENAI_MODEL || DEFAULT_MODEL,
       max_tokens,
-      system: sys,
-      messages,
+      messages: oaMessages,
       stream: !!stream,
     }),
   });
@@ -127,23 +135,39 @@ export default async function handler(req, res) {
     return res.status(upstream.status).json({ error: "Upstream error", detail });
   }
 
-  // Streaming SSE: passthrough directo al navegador
+  // ── Streaming: traducir SSE de OpenAI → eventos que entiende el chatbot ──
   if (stream && upstream.body) {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache, no-transform");
     res.setHeader("Connection", "keep-alive");
+
     const reader = upstream.body.getReader();
     const dec = new TextDecoder();
+    let buf = "";
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-      res.write(dec.decode(value, { stream: true }));
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop();
+      for (const line of lines) {
+        const l = line.trim();
+        if (!l.startsWith("data:")) continue;
+        const payload = l.slice(5).trim();
+        if (!payload || payload === "[DONE]") continue;
+        let ev; try { ev = JSON.parse(payload); } catch { continue; }
+        const chunk = ev?.choices?.[0]?.delta?.content;
+        if (chunk) res.write(sseDelta(chunk));
+      }
     }
+    res.write("data: [DONE]\n\n");
     return res.end();
   }
 
+  // ── Sin streaming: devolver en el formato que espera el frontend ──
   const data = await upstream.json();
-  return res.status(200).json(data);
+  const text = data?.choices?.[0]?.message?.content || "Disculpa, no pude generar una respuesta.";
+  return res.status(200).json({ content: [{ type: "text", text }] });
 }
 
 /**

@@ -20,7 +20,7 @@ selección por aplicación.
 ## Despliegue
 
 ### Opción A — Standalone (demo rápida)
-1. Sustituye `FLOWNEXION_API_KEY` en `chatbot.html` por la API key real de Anthropic.
+1. Sustituye `FLOWNEXION_API_KEY` en `chatbot.html` por la API key real de OpenAI.
 2. Sube `chatbot.html` a tu hosting.
 
 ⚠️ La API key queda visible en el navegador. **Solo para demos/desarrollo.**
@@ -28,7 +28,8 @@ selección por aplicación.
 ### Opción B — Con proxy backend (RECOMENDADO producción)
 1. Despliega `proxy/chat.js` como función serverless (Vercel/Next.js `api/`, Netlify) o en Express.
 2. Configura variables de entorno:
-   - `ANTHROPIC_API_KEY` — clave de Anthropic (obligatoria).
+   - `OPENAI_API_KEY` — clave de OpenAI (obligatoria, empieza por `sk-...`).
+   - `OPENAI_MODEL` — modelo de OpenAI (opcional, por defecto `gpt-4o`).
    - `ALLOWED_ORIGIN` — ej. `https://esgas.es` (recomendada).
 3. En `chatbot.html` o al usar `<ChatBot />`, fija `apiProxy` con la URL del proxy
    (ej. `apiProxy: "https://esgas.es/api/chat"`). La API key nunca sale del servidor.
@@ -56,7 +57,7 @@ export default function Page() {
 ```
 
 Copia `proxy/chat.js` a `src/app/api/chat/route.js` (o `pages/api/chat.js`) según tu
-estructura, y define `ANTHROPIC_API_KEY` en las variables de entorno del proyecto.
+estructura, y define `OPENAI_API_KEY` en las variables de entorno del proyecto.
 
 ## Catálogo PrestaShop (pendiente de API)
 
@@ -75,8 +76,9 @@ referencia, precio y stock reales.
 
 ## Modelo
 
-Usa `claude-sonnet-4-6` (Anthropic). Ajustable en `config.json`, `chatbot.html`,
-`ChatBot.jsx` y `proxy/chat.js`.
+Usa **OpenAI** `gpt-4o` (configurable con la variable de entorno `OPENAI_MODEL`
+en el proxy). El proxy traduce la respuesta al formato que ya entiende el frontend,
+por lo que no hay que tocar `chatbot.html` ni `ChatBot.jsx` para cambiar de modelo.
 
 ## Actualizar la información
 
