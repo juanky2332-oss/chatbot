@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/clientes/esgas/chatbot.html" }
+    { "source": "/", "destination": "/index.html" }
   ]
 }
