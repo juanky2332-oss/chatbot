@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Flownexion Chatbot Config",
+  "type": "object",
+  "required": ["clientName", "clientSlug", "primaryColor", "welcomeMessage", "companyInfo", "allowedTopics", "systemPrompt"],
+  "properties": {
+    "clientName":     { "type": "string" },
+    "clientSlug":     { "type": "string" },
+    "sector":         { "type": "string" },
+    "city":           { "type": "string" },
+    "primaryColor":   { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "clientLogo":     { "type": "string" },
+    "assistantRole":  { "type": "string" },
+    "welcomeMessage": { "type": "string" },
+    "suggestedQuestions": { "type": "array", "items": { "type": "string" }, "maxItems": 4 },
+    "companyInfo":    { "type": "string" },
+    "allowedTopics":  { "type": "array", "items": { "type": "string" } },
+    "systemPrompt":   { "type": "string" },
+    "contact":        {
+      "type": "object",
+      "properties": {
+        "phone":   { "type": "string" },
+        "email":   { "type": "string" },
+        "web":     { "type": "string" },
+        "address": { "type": "string" }
+      }
+    },
+    "model":      { "type": "string", "default": "claude-sonnet-4-6" },
+    "createdAt":  { "type": "string" },
+    "version":    { "type": "string", "default": "1.0" },
+    "poweredBy": {
+      "type": "object",
+      "properties": {
+        "name": { "const": "Flownexion" },
+        "url":  { "const": "https://flownexion.com/" },
+        "logo": { "const": "https://flownexion.com/wp-content/uploads/2025/07/logotipo_flownexion_calidadBaja-1.png" }
+      }
+    }
+  }
+}

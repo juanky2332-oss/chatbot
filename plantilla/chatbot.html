@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{CLIENT_NAME}} — Asistente virtual</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;background:#f4f5f8;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px;color:#1a1d2e;-webkit-font-smoothing:antialiased}
+.chat{width:100%;max-width:420px;height:min(640px,92vh);background:#fff;border-radius:18px;box-shadow:0 10px 50px rgba(15,23,42,.15),0 2px 8px rgba(15,23,42,.06);display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(15,23,42,.05)}
+.head{background:var(--pc);padding:14px 16px;display:flex;align-items:center;gap:11px;flex-shrink:0;color:#fff}
+.head-logo{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden;border:1px solid rgba(255,255,255,.15)}
+.head-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.head-text{flex:1;min-width:0}
+.head-name{font-weight:700;font-size:15px;line-height:1.2;letter-spacing:-.01em}
+.head-status{font-size:11.5px;opacity:.85;display:flex;align-items:center;gap:5px;margin-top:2px}
+.dot-on{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;box-shadow:0 0 0 2px rgba(74,222,128,.25)}
+.head-close{background:rgba(255,255,255,.12);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:16px;transition:background .15s}
+.head-close:hover{background:rgba(255,255,255,.22)}
+body.embedded .head-close{display:flex}
+.msgs{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(180deg,#fafbfc 0%,#f4f5f8 100%);scroll-behavior:smooth}
+.msgs::-webkit-scrollbar{width:4px}
+.msgs::-webkit-scrollbar-thumb{background:#cbd0db;border-radius:2px}
+.msgs::-webkit-scrollbar-thumb:hover{background:#a3aab8}
+.m{display:flex;gap:8px;align-items:flex-end;animation:in .22s ease-out}
+.m.u{justify-content:flex-end}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.av{width:28px;height:28px;border-radius:50%;background:var(--pc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.b{max-width:79%;padding:10px 14px;font-size:13.5px;line-height:1.55;word-wrap:break-word}
+.m.a .b{background:#fff;color:#1a1d2e;border-radius:18px 18px 18px 4px;box-shadow:0 1px 3px rgba(15,23,42,.08),0 0 0 1px rgba(15,23,42,.03)}
+.m.u .b{background:var(--pc);color:#fff;border-radius:18px 18px 4px 18px}
+.b strong{font-weight:700}
+.b em{font-style:italic}
+.b code{background:rgba(15,23,42,.07);padding:1px 5px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+.m.u .b code{background:rgba(255,255,255,.2)}
+.b a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.b ul{margin:6px 0 2px 0;padding-left:18px}
+.b ul li{margin:3px 0}
+.b p+p{margin-top:8px}
+.dots{display:flex;gap:4px;padding:13px 16px;align-items:center}
+.dots span{width:7px;height:7px;border-radius:50%;background:var(--pc);animation:bob 1.4s ease-in-out infinite}
+.dots span:nth-child(2){animation-delay:.18s}
+.dots span:nth-child(3){animation-delay:.36s}
+@keyframes bob{0%,80%,100%{transform:scale(.65);opacity:.35}40%{transform:scale(1.15);opacity:1}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px 50px;animation:in .3s ease-out}
+.chip{background:#fff;border:1px solid #e2e6ef;color:#3f4961;padding:6px 12px;border-radius:14px;font-size:12px;cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.3}
+.chip:hover{border-color:var(--pc);color:var(--pc)}
+.inp{padding:11px 12px 10px;background:#fff;border-top:1px solid #eef0f5;display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.inp textarea{flex:1;padding:9px 14px;border:1.5px solid #e5e7eb;border-radius:20px;font-size:13.5px;outline:none;background:#f9fafb;font-family:inherit;line-height:1.4;resize:none;max-height:96px;min-height:38px;transition:border-color .15s;color:#1a1d2e}
+.inp textarea:focus{border-color:var(--pc);background:#fff}
+.inp textarea:disabled{opacity:.6}
+.send{width:38px;height:38px;border-radius:50%;background:var(--pc);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;color:#fff}
+.send:hover:not(:disabled){transform:scale(1.05)}
+.send:active:not(:disabled){transform:scale(.95)}
+.send:disabled{background:#d1d5db;cursor:default}
+.send svg{width:15px;height:15px}
+.pwr{background:#fff;border-top:1px solid #f0f2f5;padding:6px 12px;display:flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0}
+.pwr span{font-size:10.5px;color:#9ca3af;letter-spacing:.1px}
+.pwr a{display:inline-flex;align-items:center;text-decoration:none;line-height:0}
+.pwr img{height:14px;object-fit:contain;display:block}
+.pwr .fb{font-size:11.5px;font-weight:700;color:#1a56db;letter-spacing:-.3px;display:none}
+.err{padding:10px 14px;background:#fef2f2;color:#991b1b;border-radius:10px;font-size:12.5px;border-left:3px solid #ef4444;margin:0 4px;animation:in .2s ease-out}
+</style>
+</head>
+<body>
+<div class="chat" role="region" aria-label="Asistente virtual de {{CLIENT_NAME}}">
+
+  <header class="head">
+    <div class="head-logo" id="hLogo" aria-hidden="true"></div>
+    <div class="head-text">
+      <div class="head-name" id="hName"></div>
+      <div class="head-status"><span class="dot-on"></span><span id="hStatus">En línea · Responde al momento</span></div>
+    </div>
+    <button class="head-close" onclick="window.parent.postMessage('flownexion:close','*')" aria-label="Cerrar">✕</button>
+  </header>
+
+  <div class="msgs" id="msgs" role="log" aria-live="polite" aria-atomic="false"></div>
+  <div id="chipsContainer"></div>
+
+  <div class="inp">
+    <textarea id="inp" placeholder="Escribe tu mensaje..." rows="1" aria-label="Mensaje" autocomplete="off"></textarea>
+    <button class="send" id="sendBtn" aria-label="Enviar mensaje">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <!-- ██ POWERED BY FLOWNEXION — OBLIGATORIO ██ -->
+  <div class="pwr">
+    <span>Powered by</span>
+    <a href="https://flownexion.com/" target="_blank" rel="noopener noreferrer" aria-label="Flownexion - Agencia IA">
+      <img src="https://flownexion.com/wp-content/uploads/2025/07/logotipo_flownexion_calidadBaja-1.png" alt="Flownexion" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="fb">flownexion</span>
+    </a>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+// CONFIG DEL CLIENTE — Claude Code sustituye placeholders
+// ════════════════════════════════════════════════════
+const CFG = {
+  apiKey:       "FLOWNEXION_API_KEY",
+  model:        "claude-sonnet-4-6",
+  clientName:   "{{CLIENT_NAME}}",
+  clientLogo:   "{{CLIENT_LOGO}}",
+  primaryColor: "{{PRIMARY_COLOR}}",
+  welcome:      "{{WELCOME_MESSAGE}}",
+  suggestions:  {{SUGGESTED_QUESTIONS}},
+  system:       `{{SYSTEM_PROMPT}}`,
+  maxHistoryTurns: 12,
+  apiProxy:     "" // Recomendado en producción: poner aquí URL del proxy backend en vez de usar apiKey
+};
+
+document.documentElement.style.setProperty('--pc', CFG.primaryColor);
+document.title = CFG.clientName + " — Asistente virtual";
+if (window.self !== window.top) document.body.classList.add('embedded');
+
+const $ = id => document.getElementById(id);
+const initial = CFG.clientName.trim().charAt(0).toUpperCase() || "•";
+$("hName").textContent = CFG.clientName;
+$("hLogo").innerHTML = CFG.clientLogo
+  ? `<img src="${CFG.clientLogo}" alt="" onerror="this.parentElement.textContent='${initial}'">`
+  : initial;
+
+// Mini-parser markdown seguro
+function md(text) {
+  const e = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let html = e(text);
+  html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,;:!?])/g, '$1<em>$2</em>');
+  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  const lines = html.split('\n');
+  let out = '', inUl = false;
+  for (const ln of lines) {
+    if (/^\s*[-•]\s+/.test(ln)) {
+      if (!inUl) { out += '<ul>'; inUl = true; }
+      out += '<li>' + ln.replace(/^\s*[-•]\s+/, '') + '</li>';
+    } else {
+      if (inUl) { out += '</ul>'; inUl = false; }
+      out += ln + '<br>';
+    }
+  }
+  if (inUl) out += '</ul>';
+  return out.replace(/(<br>\s*){2,}/g, '<br><br>').replace(/<br>$/, '');
+}
+
+const state = { history: [], busy: false };
+
+function trimHistory() {
+  // Mantener últimos N turnos para no inflar tokens
+  const max = CFG.maxHistoryTurns * 2;
+  if (state.history.length > max) state.history = state.history.slice(-max);
+}
+
+function scrollDown() {
+  requestAnimationFrame(() => { $("msgs").scrollTop = $("msgs").scrollHeight; });
+}
+
+function addMsg(role, html) {
+  const wrap = document.createElement('div');
+  wrap.className = 'm ' + (role === 'user' ? 'u' : 'a');
+  if (role === 'assistant') {
+    wrap.innerHTML = `<div class="av">${initial}</div><div class="b">${html}</div>`;
+  } else {
+    wrap.innerHTML = `<div class="b">${html}</div>`;
+  }
+  $("msgs").appendChild(wrap);
+  scrollDown();
+  return wrap.querySelector('.b');
+}
+
+function showTyping() {
+  const wrap = document.createElement('div');
+  wrap.className = 'm a'; wrap.id = 'typing';
+  wrap.innerHTML = `<div class="av">${initial}</div><div class="b dots"><span></span><span></span><span></span></div>`;
+  $("msgs").appendChild(wrap);
+  scrollDown();
+}
+function hideTyping() { $("typing")?.remove(); }
+
+function showError(text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'err';
+  wrap.textContent = text;
+  $("msgs").appendChild(wrap);
+  scrollDown();
+}
+
+function renderChips() {
+  if (!CFG.suggestions?.length) return;
+  const c = $("chipsContainer");
+  c.className = 'chips';
+  c.innerHTML = CFG.suggestions.slice(0, 4).map(q =>
+    `<button class="chip" onclick="useChip(this)">${q.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</button>`
+  ).join('');
+}
+window.useChip = function(btn) {
+  $("inp").value = btn.textContent;
+  $("chipsContainer").innerHTML = '';
+  send();
+};
+
+// Bienvenida + chips
+addMsg('assistant', md(CFG.welcome));
+renderChips();
+
+// Autosize textarea
+const inp = $("inp");
+inp.addEventListener('input', () => {
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 96) + 'px';
+});
+
+async function send() {
+  const text = inp.value.trim();
+  if (!text || state.busy) return;
+  inp.value = ''; inp.style.height = '38px';
+  $("chipsContainer").innerHTML = '';
+  addMsg('user', md(text));
+  state.history.push({ role: 'user', content: text });
+  trimHistory();
+  state.busy = true; $("sendBtn").disabled = true; inp.disabled = true;
+  showTyping();
+
+  try {
+    const reply = await callAPI();
+    hideTyping();
+    state.history.push({ role: 'assistant', content: reply });
+    addMsg('assistant', md(reply));
+  } catch (err) {
+    hideTyping();
+    showError("No puedo conectar en este momento. Por favor, vuelve a intentarlo en unos segundos.");
+    state.history.pop();
+  }
+
+  state.busy = false; $("sendBtn").disabled = false; inp.disabled = false; inp.focus();
+}
+
+async function callAPI() {
+  const url = CFG.apiProxy || 'https://api.anthropic.com/v1/messages';
+  const headers = { 'Content-Type': 'application/json' };
+  if (!CFG.apiProxy) {
+    headers['x-api-key'] = CFG.apiKey;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+  }
+  const body = {
+    model: CFG.model,
+    max_tokens: 1024,
+    system: CFG.system,
+    messages: state.history
+  };
+  const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
+  if (!res.ok) throw new Error('API error ' + res.status);
+  const data = await res.json();
+  return data.content?.[0]?.text || 'Disculpa, no pude generar una respuesta.';
+}
+
+$("sendBtn").addEventListener('click', send);
+inp.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+});
+inp.focus();
+</script>
+</body>
+</html>
