@@ -1,0 +1,212 @@
+{
+  "timestamp": "2026-05-20T10:30:00Z",
+  "lastUpdate": "2026-05-20",
+  "status": "online",
+  "products": [
+    {
+      "id": "ntn-6205-2rs",
+      "sku": "NTN-6205-2RS",
+      "name": "Rodamiento Rígido de Bolas NTN 6205-2RS",
+      "brand": "NTN",
+      "series": "6205",
+      "type": "Rígido de bolas",
+      "dimensions": {
+        "bore": 25,
+        "od": 52,
+        "width": 15,
+        "unit": "mm"
+      },
+      "specifications": {
+        "dynamicLoad": 51.2,
+        "staticLoad": 61,
+        "speedLimit": 10000,
+        "sealType": "2RS (goma)"
+      },
+      "price": 12.50,
+      "currency": "EUR",
+      "stock": 87,
+      "prestashopUrl": "https://shop.esgas.es/rodamientos/ntns-6205-2rs-p-12450",
+      "category": "Rodamientos Rígidos"
+    },
+    {
+      "id": "ntn-6206-2rs",
+      "sku": "NTN-6206-2RS",
+      "name": "Rodamiento Rígido de Bolas NTN 6206-2RS",
+      "brand": "NTN",
+      "series": "6206",
+      "type": "Rígido de bolas",
+      "dimensions": {
+        "bore": 30,
+        "od": 62,
+        "width": 16,
+        "unit": "mm"
+      },
+      "specifications": {
+        "dynamicLoad": 68.6,
+        "staticLoad": 81.9,
+        "speedLimit": 9500,
+        "sealType": "2RS (goma)"
+      },
+      "price": 14.75,
+      "currency": "EUR",
+      "stock": 156,
+      "prestashopUrl": "https://shop.esgas.es/rodamientos/ntns-6206-2rs-p-12451",
+      "category": "Rodamientos Rígidos"
+    },
+    {
+      "id": "ntm-nu205",
+      "sku": "NTN-NU205",
+      "name": "Rodamiento Cilíndrico NTN NU205",
+      "brand": "NTN",
+      "series": "NU205",
+      "type": "Rodillo Cilíndrico",
+      "dimensions": {
+        "bore": 25,
+        "od": 52,
+        "width": 15,
+        "unit": "mm"
+      },
+      "specifications": {
+        "dynamicLoad": 71.5,
+        "staticLoad": 92.3,
+        "speedLimit": 12000,
+        "sealType": "Abierto"
+      },
+      "price": 18.30,
+      "currency": "EUR",
+      "stock": 42,
+      "prestashopUrl": "https://shop.esgas.es/rodamientos/ntn-nu205-p-12452",
+      "category": "Rodamientos Cilíndricos"
+    },
+    {
+      "id": "snr-30205",
+      "sku": "SNR-30205",
+      "name": "Rodamiento Cónico SNR 30205",
+      "brand": "SNR",
+      "series": "30205",
+      "type": "Rodillo Cónico",
+      "dimensions": {
+        "bore": 25,
+        "od": 52,
+        "width": 15,
+        "unit": "mm"
+      },
+      "specifications": {
+        "dynamicLoad": 62.3,
+        "staticLoad": 79.7,
+        "speedLimit": 11000,
+        "sealType": "Abierto"
+      },
+      "price": 16.95,
+      "currency": "EUR",
+      "stock": 29,
+      "prestashopUrl": "https://shop.esgas.es/rodamientos/snr-30205-p-12453",
+      "category": "Rodamientos Cónicos"
+    },
+    {
+      "id": "ntm-6308-c3",
+      "sku": "NTN-6308-C3",
+      "name": "Rodamiento Rígido NTN 6308-C3 (Juego aumentado)",
+      "brand": "NTN",
+      "series": "6308",
+      "type": "Rígido de bolas",
+      "dimensions": {
+        "bore": 40,
+        "od": 90,
+        "width": 23,
+        "unit": "mm"
+      },
+      "specifications": {
+        "dynamicLoad": 128,
+        "staticLoad": 169,
+        "speedLimit": 7800,
+        "sealType": "Abierto",
+        "clearance": "C3 (aumentado)"
+      },
+      "price": 28.50,
+      "currency": "EUR",
+      "stock": 15,
+      "prestashopUrl": "https://shop.esgas.es/rodamientos/ntn-6308-c3-p-12454",
+      "category": "Rodamientos Rígidos"
+    },
+    {
+      "id": "snr-uc206",
+      "sku": "SNR-UC206",
+      "name": "Inserto Rodante SNR UC206 (para soportes)",
+      "brand": "SNR",
+      "series": "UC206",
+      "type": "Inserto Rodante",
+      "dimensions": {
+        "bore": 30,
+        "od": 72,
+        "width": 38,
+        "unit": "mm"
+      },
+      "specifications": {
+        "dynamicLoad": 68.6,
+        "staticLoad": 81.9,
+        "speedLimit": 6300,
+        "sealType": "Sellado"
+      },
+      "price": 35.20,
+      "currency": "EUR",
+      "stock": 8,
+      "prestashopUrl": "https://shop.esgas.es/rodamientos/snr-uc206-p-12455",
+      "category": "Insertos Rodantes"
+    },
+    {
+      "id": "correa-spz-1000",
+      "sku": "CORREA-SPZ-1000",
+      "name": "Correa Trapecial Estrecha SPZ 1000 LA",
+      "brand": "SNR",
+      "type": "Correa de Transmisión",
+      "dimensions": {
+        "profile": "SPZ",
+        "length": 1000,
+        "unit": "mm"
+      },
+      "specifications": {
+        "powerRating": 1.2,
+        "maxSpeed": 6000,
+        "material": "Caucho reforzado"
+      },
+      "price": 8.40,
+      "currency": "EUR",
+      "stock": 234,
+      "prestashopUrl": "https://shop.esgas.es/transmision/correa-spz-1000-p-12456",
+      "category": "Correas"
+    },
+    {
+      "id": "reten-tc-30x47x7",
+      "sku": "RETEN-TC-30x47x7",
+      "name": "Retén Radial TC 30x47x7 NBR",
+      "brand": "SNR",
+      "type": "Retén Radial",
+      "dimensions": {
+        "bore": 30,
+        "od": 47,
+        "width": 7,
+        "unit": "mm"
+      },
+      "specifications": {
+        "sealType": "TC (doble labio)",
+        "material": "NBR (Nitrilo)"
+      },
+      "price": 5.60,
+      "currency": "EUR",
+      "stock": 512,
+      "prestashopUrl": "https://shop.esgas.es/transmision/reten-tc-30x47x7-p-12457",
+      "category": "Retenes"
+    }
+  ],
+  "categories": [
+    "Rodamientos Rígidos",
+    "Rodamientos Cilíndricos",
+    "Rodamientos Cónicos",
+    "Insertos Rodantes",
+    "Correas",
+    "Retenes"
+  ],
+  "apiVersion": "1.0",
+  "note": "Catálogo ficticio para demostración. Será sincronizado con PrestaShop cuando la API esté disponible."
+}

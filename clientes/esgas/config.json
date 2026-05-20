@@ -4,12 +4,12 @@
   "sector": "Industria — rodamientos y transmisión de potencia",
   "primaryColor": "#2563eb",
   "assistantRole": "asistente técnico",
-  "welcomeMessage": "Hola, soy el asistente técnico de ESGAS. Puedo ayudarte con equivalencias entre marcas (SKF, FAG, NSK, TIMKEN, KOYO → NTN/SNR), medidas y especificaciones, diagnóstico de fallos y selección de rodamientos. ¿Qué necesitas?",
+  "welcomeMessage": "Hola, soy el asistente técnico de ESGAS. Ayudo con equivalencias (SKF, FAG, NSK → NTN/SNR), especificaciones, diagnóstico de fallos, **y ahora también puedo mostrarte precios y enlaces para comprar directamente**. ¿Qué necesitas?",
   "suggestedQuestions": [
     "Equivalencia NTN/SNR de un SKF 6205-2RS",
-    "Medidas del rodamiento 6206",
-    "Hace ruido y se calienta, ¿qué puede ser?",
-    "¿Qué rodamiento uso con motor y variador?"
+    "¿Cuál es el precio del NTN 6205-2RS?",
+    "Quiero comprar un rodamiento NTN 6206",
+    "¿Tienes disponible el rodamiento 6308-C3?"
   ],
   "companyInfo": "## Servicios\n- Equivalencias exactas SKF/FAG/NSK/TIMKEN/KOYO/INA/NACHI → NTN/SNR\n- Diagnóstico de fallos (síntomas, ruido, temperatura, vibración)\n- Dimensiones y especificaciones técnicas (bore, OD, ancho, C/C0)\n- Selección de rodamientos por aplicación\n- Transmisión de potencia (correas, poleas, casquillos, cadenas, retenes, soportes)\n\n## Productos\n- Especialista oficial NTN/SNR\n- Más de 15.000 referencias bajo estándar ISO\n\n## Contacto\nWeb: https://esgas.es\nAsistente disponible 24/7\n\n## Información adicional\nLa consulta de stock, precio y plazo en tiempo real aún no está conectada (integración de catálogo PrestaShop en curso).",
   "allowedTopics": [
