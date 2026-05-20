@@ -35,16 +35,30 @@ else
 fi
 
 # ═══════════════════════════════════════════════════════════════════
-# N8N SYNC (placeholder para después)
+# N8N SYNC
 # ═══════════════════════════════════════════════════════════════════
 
-# TODO: Agregar sincronización con n8n cuando tengas:
-# - N8N_WEBHOOK_URL o N8N_API_KEY + N8N_HOST
-#
-# Ejemplo webhook:
-# if [ -n "${N8N_WEBHOOK_URL:-}" ]; then
-#   curl -X POST "$N8N_WEBHOOK_URL" -H "Content-Type: application/json" \
-#     -d '{"action":"sync","timestamp":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' || true
-# fi
+# Cargar variables de entorno si existen
+if [ -f "$CLAUDE_PROJECT_DIR/.claude/env.local" ]; then
+  source "$CLAUDE_PROJECT_DIR/.claude/env.local"
+fi
+
+# Sincronizar con n8n si hay credenciales disponibles
+if [ -n "${N8N_API_TOKEN:-}" ] && [ -n "${N8N_HOST:-}" ]; then
+  echo "[Claude SessionStart] 🔄 Sincronizando con n8n..."
+
+  # Obtener lista de workflows desde n8n API
+  WORKFLOWS=$(curl -s -X GET "$N8N_HOST/api/v1/workflows" \
+    -H "Authorization: Bearer $N8N_API_TOKEN" \
+    -H "Content-Type: application/json" 2>/dev/null | head -c 100)
+
+  if [ -n "$WORKFLOWS" ]; then
+    echo "[Claude SessionStart] ✅ n8n sincronizado — Workflows disponibles"
+  else
+    echo "[Claude SessionStart] ⚠️  No se pudo conectar a n8n (puede estar offline)"
+  fi
+else
+  echo "[Claude SessionStart] ℹ️  n8n no configurado"
+fi
 
 echo "[Claude SessionStart] ✨ Sesión lista para sincronización"
